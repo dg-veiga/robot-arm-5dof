@@ -14,12 +14,23 @@ arm = SerialLink(l);
 
 q0 = deg2rad([0 45 -22.5 -22.5 0]);
 m1 = arm.fkine(q0);
-m2 = getNextMatrix(m1, -100,100,100, 10,10,10);
+m2 = getNextMatrix(m1, -50,50,50, 10,10,10);
 
 qf = arm.ikine(m2, 'q0', q0, 'mask', [1 1 0 0 0 1]);
 
-traj = jtraj(q0, qf, 10);
-plotQTraj(traj);
+% traj = jtraj(q0, qf, 10);
+% plotQTraj(traj);
 
 figure();
 arm.plot(q0);
+arm.animate(qf);
+
+joy = vrjoystick(1);
+exit = false;
+diff = 0.1;
+dt = 0.2;
+while not(exit)
+    [dx, dy, dz, drx, dry, drz, exit] = GamesirG7Controller(joy, diff);
+    disp([dx, dy, dz, drx, dry, drz, exit]);
+    pause(dt);
+end
